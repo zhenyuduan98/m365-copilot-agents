@@ -126,9 +126,4 @@ git clone https://github.com/zhenyuduan98/m365-copilot-agents.git
 
 ---
 
-## 许可与致谢
-
-- 代码按 [MIT License](LICENSE) 开源。
-- 教程中标注「官方文档截图」的图片来自 [Microsoft Learn](https://learn.microsoft.com)，按 CC BY 4.0 许可使用，出处见各教程末尾。
-- 灵感来源：Matthew Devaney，[M365 Agents Toolkit: Add A Custom API To An Agent](https://www.matthewdevaney.com/m365-agents-toolkit-add-a-custom-api-to-an-agent/)。
-- 数据来源：[高德开放平台](https://lbs.amap.com)、[NASA Open APIs](https://api.nasa.gov)。本项目与高德、NASA、Microsoft 均无官方关联。
+数据来源：[高德开放平台](https://lbs.amap.com)、[NASA Open APIs](https://api.nasa.gov)。
