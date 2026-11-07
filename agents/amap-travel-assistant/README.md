@@ -1,4 +1,4 @@
-# 🗺️ 高德出行助手 — Amap Travel Assistant Copilot 代理
+# 高德出行助手 — Amap Travel Assistant Copilot 代理
 
 一个 Microsoft 365 Copilot 声明式代理，调用高德地图 Web 服务 API，回答中国城市的天气、找地点和路线规划问题。
 

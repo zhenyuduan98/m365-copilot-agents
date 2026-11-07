@@ -1,4 +1,4 @@
-# 🤖 M365 Copilot Agents — 用声明式代理把外部 API 接进 Microsoft 365 Copilot
+# M365 Copilot Agents — 用声明式代理把外部 API 接进 Microsoft 365 Copilot
 
 > 两个基于 **Microsoft 365 Agents Toolkit** 构建、已部署到 Microsoft 365 Copilot 的声明式代理（Declarative Agent），以及两份从零开始的中文新手教程。
 >
@@ -12,9 +12,9 @@
 
 ---
 
-## ✨ 项目一览
+## 项目一览
 
-| | 🗺️ [高德出行助手](agents/amap-travel-assistant) | 🔭 [Space Explorer](agents/space-explorer) |
+| | [高德出行助手](agents/amap-travel-assistant) | [Space Explorer](agents/space-explorer) |
 |---|---|---|
 | **场景** | 中国城市出行：天气、找店、路线规划 | 太空科普：天文图、近地小行星、地球实拍 |
 | **外部 API** | 高德地图 Web 服务（8 个接口，v3 和 v5 混用） | NASA Open APIs（4 个接口） |
@@ -22,14 +22,14 @@
 | **卡片亮点** | 店铺照片缩略图、逐日预报表、公交方案列表、高德导航按钮 | 地球照片、天文图，上游接口故障时自动降级 |
 | **多步调用** | 地址解析 → 周边搜索 / 路线规划 | 小行星列表 → 单颗详情 |
 
-### 🗺️ 高德出行助手
+### 高德出行助手
 
 <p>
   <img src="docs/amap/images/20-weather-answer.png" width="49%" alt="天气问答：结论、建议和 4 天预报卡片">
   <img src="docs/amap/images/21-coffee-answer.png" width="49%" alt="咖啡店推荐：对比表格和店铺卡片">
 </p>
 
-### 🔭 Space Explorer
+### Space Explorer
 
 <p>
   <img src="docs/nasa/images/12-agent-home-starters.png" width="49%" alt="代理首页和开场白按钮">
@@ -38,7 +38,7 @@
 
 ---
 
-## 🏗️ 架构
+## 架构
 
 ```mermaid
 flowchart LR
@@ -59,7 +59,7 @@ flowchart LR
 
 ---
 
-## 🔧 解决过的工程问题
+## 解决过的工程问题
 
 开发过程中遇到并解决的实际问题（详细过程见教程）：
 
@@ -69,7 +69,7 @@ flowchart LR
 | 公交路线结果不完整 | 高德 v3 接口返回大量轨迹坐标，单次 38.7 KB | 改用 v5 接口加 `show_fields=cost`，降到 7.4 KB |
 | 卡片里店铺照片显示为灰块 | 原图 0.2 到 1.4 MB，卡片只显示 96 像素 | 自动识别高德的两种图片服务器，改写成 200 像素缩略图，约 20 KB |
 | 回答里只有图片网址，不显示图片 | Copilot 不渲染回答文字中的图片链接 | 改用自适应卡片的 `Image` 元素，用模板表达式拼出图片地址 |
-| 卡片出现「⭐ 」「人均 ¥」后面是空的 | 高德的空字段是 `""` 或 `[]`，不是 `null` | 条件判断同时检查 `!= null && != ''` |
+| 卡片里「评分」「人均 ¥」后面是空的 | 高德的空字段是 `""` 或 `[]`，不是 `null` | 条件判断同时检查 `!= null && != ''` |
 | 跳转地图会暴露 Key | 高德静态地图接口必须在网址里带 Key | 改用无需 Key 的 `uri.amap.com` 公开链接（标点、导航） |
 | NASA 小行星返回结果里带着 Key | NeoWs 的 `links` 字段包含 `api_key=` | 在指令中禁止代理展示该字段 |
 | 天文图每天都显示 NASA logo | NASA APOD 接口在网站迁移后出现上游故障 | 卡片检测到后降级为「打开 NASA APOD」按钮，修复后自动恢复 |
@@ -78,12 +78,12 @@ flowchart LR
 
 ---
 
-## 📁 目录结构
+## 目录结构
 
 ```
 m365-copilot-agents/
 ├─ agents/
-│  ├─ amap-travel-assistant/          # 🗺️ 高德出行助手（Agents Toolkit 项目）
+│  ├─ amap-travel-assistant/          # 高德出行助手（Agents Toolkit 项目）
 │  │  ├─ appPackage/
 │  │  │  ├─ instruction.txt           #    代理指令：调用顺序、单位换算、输出格式
 │  │  │  ├─ ai-plugin.json            #    插件定义：8 个功能、认证、卡片映射
@@ -92,15 +92,15 @@ m365-copilot-agents/
 │  │  ├─ amap-api.yaml                #    手写的原始 OpenAPI 描述
 │  │  ├─ m365agents.yml               #    部署流程（已补 apiKey/register）
 │  │  └─ env/.env.dev.user.example    #    Key 配置示例
-│  └─ space-explorer/                 # 🔭 NASA 太空探索（结构相同）
+│  └─ space-explorer/                 # NASA 太空探索（结构相同）
 └─ docs/
-   ├─ amap/tutorial-zh.md             # 📘 高德版新手教程（含 7 个踩坑记录）
-   └─ nasa/tutorial-zh.md             # 📗 NASA 版新手教程（含排错速查表）
+   ├─ amap/tutorial-zh.md             # 高德版新手教程（含 7 个踩坑记录）
+   └─ nasa/tutorial-zh.md             # NASA 版新手教程（含排错速查表）
 ```
 
 ---
 
-## 🚀 快速开始
+## 快速开始
 
 **前提**：VS Code、Node.js LTS、[Microsoft 365 Agents Toolkit](https://marketplace.visualstudio.com/items?itemName=TeamsDevApp.ms-teams-vscode-extension) 扩展，以及一个有 Copilot 许可证、允许上传自定义应用的 Microsoft 365 账号（推荐用开发者租户）。
 
@@ -117,7 +117,7 @@ git clone https://github.com/zhenyuduan98/m365-copilot-agents.git
 
 ---
 
-## 🧰 技术栈
+## 技术栈
 
 - **Microsoft 365 Copilot 扩展**：声明式代理 schema v1.9、API 插件 schema v2.4、Microsoft 365 Agents Toolkit（VS Code 扩展和 `atk` CLI）
 - **接口描述与认证**：OpenAPI 3.0、API Key（请求头和查询参数两种方式）、ApiKeyPluginVault
@@ -126,7 +126,7 @@ git clone https://github.com/zhenyuduan98/m365-copilot-agents.git
 
 ---
 
-## 📄 许可与致谢
+## 许可与致谢
 
 - 代码按 [MIT License](LICENSE) 开源。
 - 教程中标注「官方文档截图」的图片来自 [Microsoft Learn](https://learn.microsoft.com)，按 CC BY 4.0 许可使用，出处见各教程末尾。

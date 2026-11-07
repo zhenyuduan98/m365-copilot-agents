@@ -1,4 +1,4 @@
-# 🔭 Space Explorer — NASA 太空探索 Copilot 代理
+# Space Explorer — NASA 太空探索 Copilot 代理
 
 一个 Microsoft 365 Copilot 声明式代理，调用 NASA Open APIs，用自然语言（中英文均可）回答太空问题。
 
