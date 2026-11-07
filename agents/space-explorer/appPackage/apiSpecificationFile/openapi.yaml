@@ -1,0 +1,265 @@
+openapi: 3.0.4
+info:
+  title: NASA Open APIs - Subset
+  description: 'Astronomy Picture of the Day, near-Earth asteroids and full-disc Earth images from NASA.'
+  version: 1.0.0
+servers:
+  - url: https://api.nasa.gov
+paths:
+  /planetary/apod:
+    get:
+      summary: Get the Astronomy Picture of the Day
+      description: 'Returns NASA''s Astronomy Picture of the Day (image or video) with title and an explanation written by an astronomer. Use date for a specific day, start_date and end_date for a range, or count for random pictures.'
+      operationId: getApod
+      parameters:
+        - name: date
+          in: query
+          description: Date of the picture in YYYY-MM-DD format. Defaults to today. Earliest date is 1995-06-16.
+          explode: false
+          schema:
+            type: string
+        - name: start_date
+          in: query
+          description: Start of a date range in YYYY-MM-DD format. Cannot be used with date or count.
+          explode: false
+          schema:
+            type: string
+        - name: end_date
+          in: query
+          description: End of a date range in YYYY-MM-DD format. Defaults to today.
+          explode: false
+          schema:
+            type: string
+        - name: count
+          in: query
+          description: Return this many randomly chosen pictures (1-10). Cannot be used with date or a date range.
+          explode: false
+          schema:
+            type: integer
+        - name: thumbs
+          in: query
+          description: Return a thumbnail URL when the picture of the day is a video.
+          explode: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: 'One picture, or an array of pictures when a date range or count is used.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  date:
+                    type: string
+                  title:
+                    type: string
+                  explanation:
+                    type: string
+                  media_type:
+                    type: string
+                    description: image or video
+                  url:
+                    type: string
+                  hdurl:
+                    type: string
+                  thumbnail_url:
+                    type: string
+                  copyright:
+                    type: string
+  /neo/rest/v1/feed:
+    get:
+      summary: Get asteroids approaching Earth in a date range
+      description: 'Returns near-Earth asteroids by their closest approach date to Earth, including size, speed, miss distance and whether they are potentially hazardous. The date range can be at most 7 days.'
+      operationId: getAsteroidFeed
+      parameters:
+        - name: start_date
+          in: query
+          description: Start date in YYYY-MM-DD format.
+          required: true
+          explode: false
+          schema:
+            type: string
+        - name: end_date
+          in: query
+          description: 'End date in YYYY-MM-DD format, at most 7 days after start_date. Defaults to 7 days after start_date.'
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Asteroids grouped by close approach date.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  element_count:
+                    type: integer
+                  near_earth_objects:
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          name:
+                            type: string
+                          nasa_jpl_url:
+                            type: string
+                          absolute_magnitude_h:
+                            type: number
+                          is_potentially_hazardous_asteroid:
+                            type: boolean
+                          estimated_diameter:
+                            type: object
+                            properties:
+                              meters:
+                                type: object
+                                properties:
+                                  estimated_diameter_min:
+                                    type: number
+                                  estimated_diameter_max:
+                                    type: number
+                          close_approach_data:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                close_approach_date:
+                                  type: string
+                                orbiting_body:
+                                  type: string
+                                relative_velocity:
+                                  type: object
+                                  properties:
+                                    kilometers_per_second:
+                                      type: string
+                                    kilometers_per_hour:
+                                      type: string
+                                miss_distance:
+                                  type: object
+                                  properties:
+                                    kilometers:
+                                      type: string
+                                    lunar:
+                                      type: string
+                                      description: Miss distance in multiples of the Earth-Moon distance.
+                                    astronomical:
+                                      type: string
+                    description: Keys are dates (YYYY-MM-DD); each value is the list of asteroids making their closest approach that day.
+  '/neo/rest/v1/neo/{asteroid_id}':
+    get:
+      summary: Get details about one asteroid
+      description: 'Returns details for a single asteroid by its NASA JPL small body id (the id field returned by getAsteroidFeed), including all of its past and future close approaches.'
+      operationId: getAsteroid
+      parameters:
+        - name: asteroid_id
+          in: path
+          description: 'Asteroid SPK-ID, for example 3542519.'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Asteroid details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  nasa_jpl_url:
+                    type: string
+                  absolute_magnitude_h:
+                    type: number
+                  is_potentially_hazardous_asteroid:
+                    type: boolean
+                  estimated_diameter:
+                    type: object
+                    properties:
+                      meters:
+                        type: object
+                        properties:
+                          estimated_diameter_min:
+                            type: number
+                          estimated_diameter_max:
+                            type: number
+                  close_approach_data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        close_approach_date:
+                          type: string
+                        orbiting_body:
+                          type: string
+                        relative_velocity:
+                          type: object
+                          properties:
+                            kilometers_per_second:
+                              type: string
+                            kilometers_per_hour:
+                              type: string
+                        miss_distance:
+                          type: object
+                          properties:
+                            kilometers:
+                              type: string
+                            lunar:
+                              type: string
+                              description: Miss distance in multiples of the Earth-Moon distance.
+                            astronomical:
+                              type: string
+  '/EPIC/api/natural/date/{date}':
+    get:
+      summary: Get full-disc images of Earth for a date
+      description: Returns metadata for natural-color images of the whole sunlit side of Earth taken by NASA's EPIC camera on the DSCOVR satellite on the given date.
+      operationId: getEarthImages
+      parameters:
+        - name: date
+          in: path
+          description: Date in YYYY-MM-DD format. Recent dates may not have images yet; try a few days earlier.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of images taken on that date.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    identifier:
+                      type: string
+                    caption:
+                      type: string
+                    image:
+                      type: string
+                      description: Image file name without extension.
+                    date:
+                      type: string
+                      description: 'Capture time, YYYY-MM-DD HH:MM:SS (UTC).'
+                    centroid_coordinates:
+                      type: object
+                      properties:
+                        lat:
+                          type: number
+                        lon:
+                          type: number
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: X-Api-Key
+      in: header
+security:
+  - ApiKeyAuth: [ ]

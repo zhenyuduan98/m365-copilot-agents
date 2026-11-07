@@ -1,0 +1,41 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "https://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.5",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "🚇 公交/地铁方案",
+            "weight": "Bolder",
+            "size": "Medium"
+        },
+        {
+            "type": "Container",
+            "$data": "${transits}",
+            "separator": true,
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "方案 ${$index + 1}：${if(int(cost.duration) >= 3600, concat(string(div(int(cost.duration), 3600)), ' 小时 ', string(div(mod(int(cost.duration), 3600), 60)), ' 分钟'), concat(string(div(int(cost.duration), 60)), ' 分钟'))}${if(cost.transit_fee != null && cost.transit_fee != '', concat('　¥', cost.transit_fee), '')}　步行 ${walking_distance} 米",
+                    "weight": "Bolder",
+                    "wrap": true
+                },
+                {
+                    "type": "TextBlock",
+                    "$data": "${segments}",
+                    "$when": "${bus != null && bus.buslines != null && count(bus.buslines) > 0}",
+                    "text": "• ${bus.buslines[0].name}：${bus.buslines[0].departure_stop.name} → ${bus.buslines[0].arrival_stop.name}（${int(bus.buslines[0].via_num) + 1} 站）",
+                    "wrap": true,
+                    "spacing": "Small"
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.OpenUrl",
+            "title": "用高德地图查看公交路线",
+            "url": "${concat('https://uri.amap.com/navigation?from=', origin, '&to=', destination, '&mode=bus&src=copilot&coordinate=gaode&callnative=0')}"
+        }
+    ]
+}

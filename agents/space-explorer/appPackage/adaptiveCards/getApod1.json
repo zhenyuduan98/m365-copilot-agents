@@ -1,0 +1,56 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "https://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.5",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "${if(title != null && title != 'NASA Science', title, concat('Astronomy Picture of the Day · ', date))}",
+            "wrap": true,
+            "weight": "Bolder",
+            "size": "Medium"
+        },
+        {
+            "type": "TextBlock",
+            "text": "${date}${if(copyright, concat(' · © ', trim(copyright)), '')}",
+            "wrap": true,
+            "isSubtle": true,
+            "spacing": "None"
+        },
+        {
+            "type": "Image",
+            "$when": "${media_type == 'image' && !contains(url, 'nasa-logo')}",
+            "url": "${url}",
+            "altText": "${title}",
+            "size": "Stretch"
+        },
+        {
+            "type": "Image",
+            "$when": "${media_type != 'image' && thumbnail_url != null}",
+            "url": "${thumbnail_url}",
+            "altText": "Video thumbnail: ${title}",
+            "size": "Stretch"
+        },
+        {
+            "type": "TextBlock",
+            "$when": "${media_type != 'image'}",
+            "text": "This picture of the day is a video. Use the button below to watch it.",
+            "wrap": true,
+            "isSubtle": true
+        },
+        {
+            "type": "TextBlock",
+            "$when": "${media_type == 'image' && contains(url, 'nasa-logo')}",
+            "text": "NASA's API did not return the image for this day. Open NASA APOD to see it.",
+            "wrap": true,
+            "isSubtle": true
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.OpenUrl",
+            "title": "${if(contains(url, 'nasa-logo'), 'Open NASA APOD', if(media_type == 'image', 'Open HD image', 'Watch video'))}",
+            "url": "${if(contains(url, 'nasa-logo'), 'https://science.nasa.gov/apod/', if(media_type == 'image' && hdurl != null, hdurl, url))}"
+        }
+    ]
+}

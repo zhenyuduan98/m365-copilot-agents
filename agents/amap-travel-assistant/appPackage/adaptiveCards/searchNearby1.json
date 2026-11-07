@@ -1,0 +1,79 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "https://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.5",
+    "body": [
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "auto",
+                    "$when": "${photos != null && count(photos) > 0}",
+                    "items": [
+                        {
+                            "type": "Image",
+                            "url": "${if(contains(photos[0].url, 'aos-comment.amap.com'), concat(photos[0].url, if(contains(photos[0].url, '?'), '&', '?'), 'x-oss-process=image/resize,w_200'), if(contains(photos[0].url, 'store.is.autonavi.com/showpic'), concat(first(split(photos[0].url, '?')), '?operate=merge&w=200&h=200&position=5'), photos[0].url))}",
+                            "altText": "${name}",
+                            "width": "96px",
+                            "height": "96px"
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "${name}",
+                            "weight": "Bolder",
+                            "size": "Medium",
+                            "wrap": true
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": "${if(business.rating != null && business.rating != '', concat('⭐ ', business.rating, '　'), '')}${if(business.cost != null && business.cost != '', concat('人均 ¥', business.cost, '　'), '')}${if(distance != null && distance != '', concat('距离 ', distance, ' 米'), '')}",
+                            "wrap": true,
+                            "spacing": "Small"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": "${if(adname != null && adname != '', concat(adname, ' · '), '')}${address}",
+                            "isSubtle": true,
+                            "wrap": true,
+                            "spacing": "Small"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "FactSet",
+            "facts": [
+                {
+                    "$when": "${business.opentime_today != null && business.opentime_today != ''}",
+                    "title": "今日营业",
+                    "value": "${business.opentime_today}"
+                },
+                {
+                    "$when": "${business.tel != null && business.tel != ''}",
+                    "title": "电话",
+                    "value": "${business.tel}"
+                },
+                {
+                    "$when": "${business.tag != null && business.tag != ''}",
+                    "title": "推荐",
+                    "value": "${business.tag}"
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.OpenUrl",
+            "title": "在高德地图中查看",
+            "url": "${concat('https://uri.amap.com/marker?position=', location, '&name=', uriComponent(name), '&src=copilot&coordinate=gaode&callnative=0')}"
+        }
+    ]
+}

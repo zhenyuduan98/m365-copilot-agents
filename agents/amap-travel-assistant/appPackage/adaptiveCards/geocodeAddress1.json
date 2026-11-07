@@ -1,0 +1,27 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "https://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.5",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "📍 ${formatted_address}",
+            "weight": "Bolder",
+            "wrap": true
+        },
+        {
+            "type": "TextBlock",
+            "text": "匹配级别：${level}${if(citycode != null && citycode != '', concat('　城市编码 ', citycode), '')}",
+            "isSubtle": true,
+            "wrap": true,
+            "spacing": "Small"
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.OpenUrl",
+            "title": "在高德地图中查看",
+            "url": "${concat('https://uri.amap.com/marker?position=', location, '&name=', uriComponent(formatted_address), '&src=copilot&coordinate=gaode&callnative=0')}"
+        }
+    ]
+}

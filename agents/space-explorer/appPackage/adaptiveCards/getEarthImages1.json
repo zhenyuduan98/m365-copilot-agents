@@ -1,0 +1,39 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "https://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.5",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "${if(caption, caption, 'NASA EPIC image of Earth')}",
+            "wrap": true,
+            "weight": "Bolder"
+        },
+        {
+            "type": "Image",
+            "url": "${concat('https://epic.gsfc.nasa.gov/archive/natural/', replace(substring(date, 0, 10), '-', '/'), '/jpg/', image, '.jpg')}",
+            "altText": "Earth from space, ${date} UTC",
+            "size": "Stretch"
+        },
+        {
+            "type": "FactSet",
+            "facts": [
+                {
+                    "title": "Captured (UTC)",
+                    "value": "${date}"
+                },
+                {
+                    "title": "Centered on",
+                    "value": "lat ${centroid_coordinates.lat}, lon ${centroid_coordinates.lon}"
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.OpenUrl",
+            "title": "Open full-resolution image",
+            "url": "${concat('https://epic.gsfc.nasa.gov/archive/natural/', replace(substring(date, 0, 10), '-', '/'), '/png/', image, '.png')}"
+        }
+    ]
+}

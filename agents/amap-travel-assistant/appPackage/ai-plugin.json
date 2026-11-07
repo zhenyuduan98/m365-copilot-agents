@@ -1,0 +1,160 @@
+{
+    "$schema": "https://developer.microsoft.com/json-schemas/copilot/plugin/v2.4/schema.json",
+    "schema_version": "v2.4",
+    "name_for_human": "高德出行助手",
+    "description_for_human": "Weather, place search, geocoding and route planning in China from Amap (Gaode Maps) Web Service API.",
+    "description_for_model": "Weather, place search, geocoding and route planning in China from Amap (Gaode Maps) Web Service API.",
+    "contact_email": "publisher-email@example.com",
+    "namespace": "amaptravelassistant",
+    "capabilities": {},
+    "functions": [
+        {
+            "name": "geocodeAddress",
+            "description": "Converts a structured address or well-known place name in China to longitude,latitude coordinates and administrative codes. Use it before route planning when the user gives place names instead of coordinates.",
+            "capabilities": {
+                "response_semantics": {
+                    "data_path": "$.geocodes",
+                    "properties": {
+                        "title": "$.formatted_address",
+                        "subtitle": "$.location"
+                    },
+                    "static_template": {
+                        "file": "adaptiveCards/geocodeAddress1.json"
+                    }
+                }
+            }
+        },
+        {
+            "name": "getDrivingRoute",
+            "description": "Plans a driving route between two coordinates. Returns distance, duration, tolls, traffic lights, taxi cost estimate and turn-by-turn steps.",
+            "capabilities": {
+                "response_semantics": {
+                    "data_path": "$.route",
+                    "properties": {
+                        "title": "$.origin",
+                        "subtitle": "$.destination"
+                    },
+                    "static_template": {
+                        "file": "adaptiveCards/getDrivingRoute1.json"
+                    }
+                }
+            }
+        },
+        {
+            "name": "getTransitRoute",
+            "description": "Plans public transport routes (subway, bus, walking) between two coordinates. Requires the citycode (e.g. 010 Beijing, 021 Shanghai, 0571 Hangzhou) of the origin and destination cities, which geocodeAddress returns.",
+            "capabilities": {
+                "response_semantics": {
+                    "data_path": "$.route",
+                    "properties": {
+                        "title": "$.origin",
+                        "subtitle": "$.destination"
+                    },
+                    "static_template": {
+                        "file": "adaptiveCards/getTransitRoute1.json"
+                    }
+                }
+            }
+        },
+        {
+            "name": "getWalkingRoute",
+            "description": "Plans a walking route between two coordinates (best for under about 5 km). Returns distance in meters, duration in seconds and turn-by-turn steps.",
+            "capabilities": {
+                "response_semantics": {
+                    "data_path": "$.route",
+                    "properties": {
+                        "title": "$.origin",
+                        "subtitle": "$.destination"
+                    },
+                    "static_template": {
+                        "file": "adaptiveCards/getWalkingRoute1.json"
+                    }
+                }
+            }
+        },
+        {
+            "name": "getWeather",
+            "description": "Returns live weather (extensions=base) or a 4-day forecast (extensions=all) for a city or district in China.",
+            "capabilities": {
+                "response_semantics": {
+                    "data_path": "$",
+                    "properties": {
+                        "title": "$.info"
+                    },
+                    "static_template": {
+                        "file": "adaptiveCards/getWeather1.json"
+                    }
+                }
+            }
+        },
+        {
+            "name": "reverseGeocode",
+            "description": "Returns the address, district and nearby business areas for a longitude,latitude coordinate in China.",
+            "capabilities": {
+                "response_semantics": {
+                    "data_path": "$.regeocode",
+                    "properties": {
+                        "title": "$.formatted_address"
+                    },
+                    "static_template": {
+                        "file": "adaptiveCards/reverseGeocode1.json"
+                    }
+                }
+            }
+        },
+        {
+            "name": "searchNearby",
+            "description": "Searches points of interest within a radius around a longitude,latitude coordinate, sorted by distance. Get the coordinate with geocodeAddress first if the user gives a place name.",
+            "capabilities": {
+                "response_semantics": {
+                    "data_path": "$.pois",
+                    "properties": {
+                        "title": "$.name",
+                        "subtitle": "$.address"
+                    },
+                    "static_template": {
+                        "file": "adaptiveCards/searchNearby1.json"
+                    }
+                }
+            }
+        },
+        {
+            "name": "searchPlaces",
+            "description": "Searches points of interest (restaurants, cafes, hotels, attractions, shops, stations...) by keyword within a city. Returns name, address, coordinates, rating, average cost, opening hours, phone and photos.",
+            "capabilities": {
+                "response_semantics": {
+                    "data_path": "$.pois",
+                    "properties": {
+                        "title": "$.name",
+                        "subtitle": "$.address"
+                    },
+                    "static_template": {
+                        "file": "adaptiveCards/searchPlaces1.json"
+                    }
+                }
+            }
+        }
+    ],
+    "runtimes": [
+        {
+            "type": "OpenApi",
+            "auth": {
+                "type": "ApiKeyPluginVault",
+                "reference_id": "${{APIKEYAUTH_REGISTRATION_ID}}"
+            },
+            "spec": {
+                "url": "apiSpecificationFile/openapi.yaml"
+            },
+            "run_for_functions": [
+                "getWeather",
+                "geocodeAddress",
+                "reverseGeocode",
+                "searchPlaces",
+                "searchNearby",
+                "getWalkingRoute",
+                "getDrivingRoute",
+                "getTransitRoute"
+            ]
+        }
+    ]
+}

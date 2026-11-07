@@ -1,0 +1,552 @@
+openapi: 3.0.0
+info:
+  title: Amap Travel API
+  description: Weather, place search, geocoding and route planning in China from Amap (Gaode Maps) Web Service API.
+  version: 1.0.0
+servers:
+  - url: https://restapi.amap.com
+paths:
+  /v3/weather/weatherInfo:
+    get:
+      operationId: getWeather
+      summary: Get weather for a Chinese city
+      description: Returns live weather (extensions=base) or a 4-day forecast (extensions=all) for a city or district in China.
+      parameters:
+        - name: city
+          in: query
+          description: City or district name in Chinese (e.g. 杭州, 朝阳区) or its 6-digit adcode (e.g. 330100).
+          required: true
+          schema:
+            type: string
+        - name: extensions
+          in: query
+          description: base returns current weather; all returns today's and the next 3 days' forecast.
+          required: false
+          schema:
+            type: string
+            enum: [base, all]
+      responses:
+        '200':
+          description: Weather data. lives is filled for base, forecasts for all.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WeatherResponse'
+  /v3/geocode/geo:
+    get:
+      operationId: geocodeAddress
+      summary: Convert an address or place name to coordinates
+      description: Converts a structured address or well-known place name in China to longitude,latitude coordinates and administrative codes. Use it before route planning when the user gives place names instead of coordinates.
+      parameters:
+        - name: address
+          in: query
+          description: Address in Chinese, e.g. 北京市朝阳区阜通东大街6号 or 杭州西湖. Include the city name for better accuracy.
+          required: true
+          schema:
+            type: string
+        - name: city
+          in: query
+          description: Optional city name, citycode or adcode to limit the search.
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Matching locations.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeocodeResponse'
+  /v3/geocode/regeo:
+    get:
+      operationId: reverseGeocode
+      summary: Convert coordinates to an address
+      description: Returns the address, district and nearby business areas for a longitude,latitude coordinate in China.
+      parameters:
+        - name: location
+          in: query
+          description: Coordinate as "longitude,latitude", e.g. 120.148732,30.242489.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Address for the coordinate.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  regeocode:
+                    type: object
+                    properties:
+                      formatted_address:
+                        type: string
+                      addressComponent:
+                        type: object
+                        properties:
+                          province:
+                            type: string
+                          city:
+                            type: string
+                          district:
+                            type: string
+                          township:
+                            type: string
+                          adcode:
+                            type: string
+  /v5/place/text:
+    get:
+      operationId: searchPlaces
+      summary: Search places by keyword in a city
+      description: Searches points of interest (restaurants, cafes, hotels, attractions, shops, stations...) by keyword within a city. Returns name, address, coordinates, rating, average cost, opening hours, phone and photos.
+      parameters:
+        - name: keywords
+          in: query
+          description: Search keyword in Chinese, e.g. 咖啡, 火锅, 酒店, 西湖.
+          required: true
+          schema:
+            type: string
+        - name: region
+          in: query
+          description: City name, citycode or adcode to search in, e.g. 上海.
+          required: false
+          schema:
+            type: string
+        - name: city_limit
+          in: query
+          description: Set to true to only return results inside region.
+          required: false
+          schema:
+            type: boolean
+        - name: page_size
+          in: query
+          description: Number of results per page, 1-25. Use 5 unless the user asks for more.
+          required: false
+          schema:
+            type: integer
+        - name: page_num
+          in: query
+          description: Page number, starting from 1.
+          required: false
+          schema:
+            type: integer
+        - name: show_fields
+          in: query
+          description: Extra fields to return. Always set to "business,photos" to get rating, cost, opening hours, phone and photos.
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Matching places.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaceResponse'
+  /v5/place/around:
+    get:
+      operationId: searchNearby
+      summary: Search places near a coordinate
+      description: Searches points of interest within a radius around a longitude,latitude coordinate, sorted by distance. Get the coordinate with geocodeAddress first if the user gives a place name.
+      parameters:
+        - name: location
+          in: query
+          description: Center coordinate as "longitude,latitude".
+          required: true
+          schema:
+            type: string
+        - name: keywords
+          in: query
+          description: Search keyword in Chinese, e.g. 咖啡, 地铁站, 停车场.
+          required: false
+          schema:
+            type: string
+        - name: radius
+          in: query
+          description: Search radius in meters, 0-50000. Default 5000.
+          required: false
+          schema:
+            type: integer
+        - name: sortrule
+          in: query
+          description: distance (default) or weight (overall relevance).
+          required: false
+          schema:
+            type: string
+            enum: [distance, weight]
+        - name: page_size
+          in: query
+          description: Number of results per page, 1-25. Use 5 unless the user asks for more.
+          required: false
+          schema:
+            type: integer
+        - name: show_fields
+          in: query
+          description: Extra fields to return. Always set to "business,photos".
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Nearby places with distance in meters.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaceResponse'
+  /v5/direction/walking:
+    get:
+      operationId: getWalkingRoute
+      summary: Plan a walking route
+      description: Plans a walking route between two coordinates (best for under about 5 km). Returns distance in meters, duration in seconds and turn-by-turn steps.
+      parameters:
+        - $ref: '#/components/parameters/origin'
+        - $ref: '#/components/parameters/destination'
+        - $ref: '#/components/parameters/routeShowFields'
+      responses:
+        '200':
+          description: Walking route.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RouteResponse'
+  /v5/direction/driving:
+    get:
+      operationId: getDrivingRoute
+      summary: Plan a driving route
+      description: Plans a driving route between two coordinates. Returns distance, duration, tolls, traffic lights, taxi cost estimate and turn-by-turn steps.
+      parameters:
+        - $ref: '#/components/parameters/origin'
+        - $ref: '#/components/parameters/destination'
+        - name: strategy
+          in: query
+          description: Route preference. 32 = default recommendation, 33 = avoid congestion, 34 = prefer highways, 35 = avoid highways, 36 = avoid tolls.
+          required: false
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/routeShowFields'
+      responses:
+        '200':
+          description: Driving routes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RouteResponse'
+  /v5/direction/transit/integrated:
+    get:
+      operationId: getTransitRoute
+      summary: Plan a public transit route
+      description: Plans public transport routes (subway, bus, walking) between two coordinates. Requires the citycode (e.g. 010 Beijing, 021 Shanghai, 0571 Hangzhou) of the origin and destination cities, which geocodeAddress returns.
+      parameters:
+        - $ref: '#/components/parameters/origin'
+        - $ref: '#/components/parameters/destination'
+        - name: city1
+          in: query
+          description: citycode of the origin city, e.g. 010.
+          required: true
+          schema:
+            type: string
+        - name: city2
+          in: query
+          description: citycode of the destination city, e.g. 010.
+          required: true
+          schema:
+            type: string
+        - name: AlternativeRoute
+          in: query
+          description: Number of alternative routes to return, 1-10. Use 3.
+          required: false
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/routeShowFields'
+      responses:
+        '200':
+          description: Transit routes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransitResponse'
+security:
+  - ApiKeyAuth: []
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: query
+      name: key
+  parameters:
+    origin:
+      name: origin
+      in: query
+      description: Start coordinate as "longitude,latitude" (longitude first), e.g. 116.397428,39.90923.
+      required: true
+      schema:
+        type: string
+    destination:
+      name: destination
+      in: query
+      description: End coordinate as "longitude,latitude" (longitude first).
+      required: true
+      schema:
+        type: string
+    routeShowFields:
+      name: show_fields
+      in: query
+      description: Extra fields to return. Always set to "cost" to get duration, tolls and fares.
+      required: false
+      schema:
+        type: string
+  schemas:
+    WeatherResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        lives:
+          type: array
+          items:
+            type: object
+            properties:
+              province:
+                type: string
+              city:
+                type: string
+              weather:
+                type: string
+              temperature:
+                type: string
+              winddirection:
+                type: string
+              windpower:
+                type: string
+              humidity:
+                type: string
+              reporttime:
+                type: string
+        forecasts:
+          type: array
+          items:
+            type: object
+            properties:
+              city:
+                type: string
+              province:
+                type: string
+              reporttime:
+                type: string
+              casts:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    date:
+                      type: string
+                    week:
+                      type: string
+                    dayweather:
+                      type: string
+                    nightweather:
+                      type: string
+                    daytemp:
+                      type: string
+                    nighttemp:
+                      type: string
+                    daywind:
+                      type: string
+                    daypower:
+                      type: string
+    GeocodeResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        count:
+          type: string
+        geocodes:
+          type: array
+          items:
+            type: object
+            properties:
+              formatted_address:
+                type: string
+              province:
+                type: string
+              city:
+                type: string
+              district:
+                type: string
+              citycode:
+                type: string
+              adcode:
+                type: string
+              location:
+                type: string
+                description: longitude,latitude
+              level:
+                type: string
+    PlaceResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        count:
+          type: string
+        pois:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              type:
+                type: string
+              address:
+                type: string
+              location:
+                type: string
+                description: longitude,latitude
+              cityname:
+                type: string
+              adname:
+                type: string
+              distance:
+                type: string
+                description: Distance in meters (nearby search only).
+              business:
+                type: object
+                properties:
+                  rating:
+                    type: string
+                  cost:
+                    type: string
+                    description: Average cost per person in CNY.
+                  tel:
+                    type: string
+                  opentime_today:
+                    type: string
+                  opentime_week:
+                    type: string
+                  tag:
+                    type: string
+                  business_area:
+                    type: string
+              photos:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                    url:
+                      type: string
+    RouteResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        route:
+          type: object
+          properties:
+            origin:
+              type: string
+            destination:
+              type: string
+            taxi_cost:
+              type: string
+              description: Estimated taxi fare in CNY (driving only).
+            paths:
+              type: array
+              items:
+                type: object
+                properties:
+                  distance:
+                    type: string
+                    description: Meters.
+                  cost:
+                    type: object
+                    properties:
+                      duration:
+                        type: string
+                        description: Seconds.
+                      tolls:
+                        type: string
+                      traffic_lights:
+                        type: string
+                  steps:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        instruction:
+                          type: string
+                        road_name:
+                          type: string
+                        step_distance:
+                          type: string
+    TransitResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        route:
+          type: object
+          properties:
+            origin:
+              type: string
+            destination:
+              type: string
+            distance:
+              type: string
+            transits:
+              type: array
+              items:
+                type: object
+                properties:
+                  distance:
+                    type: string
+                  walking_distance:
+                    type: string
+                  cost:
+                    type: object
+                    properties:
+                      duration:
+                        type: string
+                        description: Seconds.
+                      transit_fee:
+                        type: string
+                        description: Fare in CNY.
+                  segments:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        bus:
+                          type: object
+                          properties:
+                            buslines:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  name:
+                                    type: string
+                                  type:
+                                    type: string
+                                  via_num:
+                                    type: string
+                                  departure_stop:
+                                    type: object
+                                    properties:
+                                      name:
+                                        type: string
+                                  arrival_stop:
+                                    type: object
+                                    properties:
+                                      name:
+                                        type: string
+                                  bus_time_tips:
+                                    type: string

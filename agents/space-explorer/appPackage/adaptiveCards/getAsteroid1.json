@@ -1,0 +1,38 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "https://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.5",
+    "body": [
+        {
+            "type": "Container",
+            "$data": "${$root}",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "close_approach_date: ${if(close_approach_date, close_approach_date, 'N/A')}",
+                    "wrap": true
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "orbiting_body: ${if(orbiting_body, orbiting_body, 'N/A')}",
+                    "wrap": true
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "relative_velocity.kilometers_per_second: ${if(relative_velocity.kilometers_per_second, relative_velocity.kilometers_per_second, 'N/A')}",
+                    "wrap": true
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "relative_velocity.kilometers_per_hour: ${if(relative_velocity.kilometers_per_hour, relative_velocity.kilometers_per_hour, 'N/A')}",
+                    "wrap": true
+                },
+                {
+                    "type": "TextBlock",
+                    "text": "miss_distance.kilometers: ${if(miss_distance.kilometers, miss_distance.kilometers, 'N/A')}",
+                    "wrap": true
+                }
+            ]
+        }
+    ]
+}

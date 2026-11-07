@@ -1,0 +1,27 @@
+{
+    "version": "v1.9",
+    "name": "高德出行助手",
+    "description": "基于高德地图 Web 服务 API：查询中国城市天气，搜索餐厅、咖啡店、景点等地点，并规划步行、驾车和公交路线。",
+    "instructions": "$[file('instruction.txt')]",
+    "conversation_starters": [
+        {
+            "text": "明天杭州天气怎么样？"
+        },
+        {
+            "text": "上海人民广场附近有什么评分高的咖啡店？"
+        },
+        {
+            "text": "从天安门坐地铁去军事博物馆怎么走？"
+        },
+        {
+            "text": "从杭州东站开车到西湖要多久？"
+        }
+    ],
+    "actions": [
+        {
+            "id": "action_1",
+            "file": "ai-plugin.json"
+        }
+    ],
+    "$schema": "https://developer.microsoft.com/json-schemas/copilot/declarative-agent/v1.9/schema.json"
+}

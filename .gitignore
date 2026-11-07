@@ -1,0 +1,11 @@
+# Secrets and per-machine state from Microsoft 365 Agents Toolkit
+**/env/.env.*.user
+**/env/.env.local
+**/.localConfigs
+**/appPackage/build/
+
+# Dependencies and OS files
+node_modules/
+.DS_Store
+.env
+.deployment

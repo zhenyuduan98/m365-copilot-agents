@@ -1,0 +1,41 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "https://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.5",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": "🚶 步行路线",
+            "weight": "Bolder",
+            "size": "Medium"
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        { "type": "TextBlock", "text": "距离", "isSubtle": true, "size": "Small" },
+                        { "type": "TextBlock", "text": "${if(float(paths[0].distance) >= 1000, concat(formatNumber(div(float(paths[0].distance), 1000), 1), ' 公里'), concat(paths[0].distance, ' 米'))}", "size": "Large", "spacing": "None" }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        { "type": "TextBlock", "text": "预计用时", "isSubtle": true, "size": "Small" },
+                        { "type": "TextBlock", "text": "${if(int(paths[0].cost.duration) >= 3600, concat(string(div(int(paths[0].cost.duration), 3600)), ' 小时 ', string(div(mod(int(paths[0].cost.duration), 3600), 60)), ' 分钟'), concat(string(max(1, div(int(paths[0].cost.duration), 60))), ' 分钟'))}", "size": "Large", "spacing": "None" }
+                    ]
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "type": "Action.OpenUrl",
+            "title": "用高德地图导航",
+            "url": "${concat('https://uri.amap.com/navigation?from=', origin, '&to=', destination, '&mode=walk&src=copilot&coordinate=gaode&callnative=0')}"
+        }
+    ]
+}

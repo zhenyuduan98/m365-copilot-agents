@@ -1,0 +1,27 @@
+{
+    "version": "v1.9",
+    "name": "Space Explorer",
+    "description": "Daily astronomy pictures, near-Earth asteroids and images of Earth from space, powered by NASA open APIs.",
+    "instructions": "$[file('instruction.txt')]",
+    "conversation_starters": [
+        {
+            "text": "Show me today's astronomy picture of the day"
+        },
+        {
+            "text": "What was the astronomy picture on my birthday, 2000-01-01?"
+        },
+        {
+            "text": "Are any hazardous asteroids passing Earth this week?"
+        },
+        {
+            "text": "Show me a photo of Earth from space taken last week"
+        }
+    ],
+    "actions": [
+        {
+            "id": "action_1",
+            "file": "ai-plugin.json"
+        }
+    ],
+    "$schema": "https://developer.microsoft.com/json-schemas/copilot/declarative-agent/v1.9/schema.json"
+}

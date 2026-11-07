@@ -1,0 +1,94 @@
+{
+    "$schema": "https://developer.microsoft.com/json-schemas/copilot/plugin/v2.4/schema.json",
+    "schema_version": "v2.4",
+    "name_for_human": "NASA Open APIs",
+    "description_for_human": "Astronomy Picture of the Day, near-Earth asteroids and full-disc Earth images from NASA.",
+    "description_for_model": "Astronomy Picture of the Day, near-Earth asteroids and full-disc Earth images from NASA.",
+    "contact_email": "publisher-email@example.com",
+    "namespace": "spaceexplorer",
+    "capabilities": {},
+    "functions": [
+        {
+            "name": "getApod",
+            "description": "Returns NASA&apos;s Astronomy Picture of the Day (image or video) with title and an explanation written by an astronomer. Use date for a specific day, start_date and end_date for a range, or count for random pictures.",
+            "capabilities": {
+                "response_semantics": {
+                    "data_path": "$",
+                    "properties": {
+                        "title": "$.title",
+                        "subtitle": "$.date",
+                        "url": "$.url"
+                    },
+                    "static_template": {
+                        "file": "adaptiveCards/getApod1.json"
+                    }
+                }
+            }
+        },
+        {
+            "name": "getAsteroid",
+            "description": "Returns details for a single asteroid by its NASA JPL small body id (the id field returned by getAsteroidFeed), including all of its past and future close approaches.",
+            "capabilities": {
+                "response_semantics": {
+                    "data_path": "$.close_approach_data",
+                    "properties": {
+                        "title": "$.close_approach_date",
+                        "subtitle": "$.orbiting_body"
+                    },
+                    "static_template": {
+                        "file": "adaptiveCards/getAsteroid1.json"
+                    }
+                }
+            }
+        },
+        {
+            "name": "getAsteroidFeed",
+            "description": "Returns near-Earth asteroids by their closest approach date to Earth, including size, speed, miss distance and whether they are potentially hazardous. The date range can be at most 7 days.",
+            "capabilities": {
+                "response_semantics": {
+                    "data_path": "$",
+                    "properties": {
+                        "title": "$.element_count"
+                    },
+                    "static_template": {
+                        "file": "adaptiveCards/getAsteroidFeed1.json"
+                    }
+                }
+            }
+        },
+        {
+            "name": "getEarthImages",
+            "description": "Returns metadata for natural-color images of the whole sunlit side of Earth taken by NASA&apos;s EPIC camera on the DSCOVR satellite on the given date.",
+            "capabilities": {
+                "response_semantics": {
+                    "data_path": "$",
+                    "properties": {
+                        "title": "$.date",
+                        "subtitle": "$.caption"
+                    },
+                    "static_template": {
+                        "file": "adaptiveCards/getEarthImages1.json"
+                    }
+                }
+            }
+        }
+    ],
+    "runtimes": [
+        {
+            "type": "OpenApi",
+            "auth": {
+                "type": "ApiKeyPluginVault",
+                "reference_id": "${{APIKEYAUTH_REGISTRATION_ID}}"
+            },
+            "spec": {
+                "url": "apiSpecificationFile/openapi.yaml"
+            },
+            "run_for_functions": [
+                "getApod",
+                "getAsteroidFeed",
+                "getAsteroid",
+                "getEarthImages"
+            ]
+        }
+    ]
+}

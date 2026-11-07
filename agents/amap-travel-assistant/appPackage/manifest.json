@@ -1,0 +1,39 @@
+{
+    "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.30/MicrosoftTeams.schema.json",
+    "manifestVersion": "1.30",
+    "version": "1.0.0",
+    "id": "${{TEAMS_APP_ID}}",
+    "developer": {
+        "name": "zhenyuduan98",
+        "websiteUrl": "https://github.com/zhenyuduan98/m365-copilot-agents",
+        "privacyUrl": "https://www.example.com/privacy",
+        "termsOfUseUrl": "https://www.example.com/termofuse"
+    },
+    "icons": {
+        "color": "color.png",
+        "outline": "outline.png"
+    },
+    "name": {
+        "short": "高德出行助手${{APP_NAME_SUFFIX}}",
+        "full": "高德出行助手 Amap Travel Assistant"
+    },
+    "description": {
+        "short": "查天气、找地点、规划路线",
+        "full": "基于高德地图 Web 服务 API：查询中国城市天气，搜索餐厅、咖啡店、景点等地点，并规划步行、驾车和公交路线。"
+    },
+    "accentColor": "#FFFFFF",
+    "supportsChannelFeatures": "tier1",
+    "copilotAgents": {
+        "declarativeAgents": [
+            {
+                "id": "declarativeAgent",
+                "file": "declarativeAgent.json"
+            }
+        ]
+    },
+    "permissions": [
+        "identity",
+        "messageTeamMembers"
+    ],
+    "validDomains": []
+}
